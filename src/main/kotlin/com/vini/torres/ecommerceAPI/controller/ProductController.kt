@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/products")
 class ProductController(private val repository: ProductRepository) {
 
-    @PostMapping
+    @PostMapping("/add")
     fun create(@RequestBody product: Product): Product {
         return repository.save(product)
     }
 
-    @GetMapping
+    @GetMapping("/all")
     fun listAll(): List<Product> {
         return repository.findAll()
     }
@@ -26,7 +26,7 @@ class ProductController(private val repository: ProductRepository) {
             .orElse(ResponseEntity.notFound().build())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     fun update(@PathVariable id: Long, @RequestBody updatedProduct: Product): ResponseEntity<Product> {
         return repository.findById(id).map { existingProduct ->
             existingProduct.name = updatedProduct.name
@@ -37,7 +37,7 @@ class ProductController(private val repository: ProductRepository) {
         }.orElse(ResponseEntity.notFound().build())
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         return if (repository.existsById(id)) {
             repository.deleteById(id)
