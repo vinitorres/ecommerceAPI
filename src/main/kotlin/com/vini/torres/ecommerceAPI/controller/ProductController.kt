@@ -29,13 +29,11 @@ class ProductController(private val repository: ProductRepository) {
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody updatedProduct: Product): ResponseEntity<Product> {
         return repository.findById(id).map { existingProduct ->
-            val productToSave = existingProduct.copy(
-                name = updatedProduct.name,
-                description = updatedProduct.description,
-                imageUrl = updatedProduct.imageUrl,
-                price = updatedProduct.price
-            )
-            ResponseEntity.ok(repository.save(productToSave))
+            existingProduct.name = updatedProduct.name
+            existingProduct.description = updatedProduct.description
+            existingProduct.imageUrl = updatedProduct.imageUrl
+            existingProduct.price = updatedProduct.price
+            ResponseEntity.ok(repository.save(existingProduct))
         }.orElse(ResponseEntity.notFound().build())
     }
 
