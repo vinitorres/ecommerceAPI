@@ -13,10 +13,6 @@ class CustomUserDetailsService(private val userRepository: UserRepository) : Use
         val domainUser = userRepository.findAll().find { it.email == email }
             ?: throw UsernameNotFoundException("User not found with email: $email")
 
-        return org.springframework.security.core.userdetails.User
-            .withUsername(domainUser.email)
-            .password(domainUser.password)
-            .roles(domainUser.role.name)
-            .build()
+        return CustomUserDetails(domainUser)
     }
 }

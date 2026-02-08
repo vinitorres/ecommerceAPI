@@ -3,6 +3,7 @@ package com.vini.torres.ecommerceAPI.presentation.controller
 import com.vini.torres.ecommerceAPI.application.usecase.cart.AddItemToCartUseCase
 import com.vini.torres.ecommerceAPI.application.usecase.cart.GetCartUseCase
 import com.vini.torres.ecommerceAPI.application.usecase.cart.RemoveItemFromCartUseCase
+import com.vini.torres.ecommerceAPI.application.usecase.cart.ClearCartUseCase
 import com.vini.torres.ecommerceAPI.presentation.request.cart.AddItemRequest
 import com.vini.torres.ecommerceAPI.presentation.response.cart.CartResponse
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,7 @@ class CartController(
     private val addItemToCartUseCase: AddItemToCartUseCase,
     private val getCartUseCase: GetCartUseCase,
     private val removeItemFromCartUseCase: RemoveItemFromCartUseCase,
+    private val clearCartUseCase: ClearCartUseCase,
     private val userRepository: UserRepository
 ) {
 
@@ -56,6 +58,13 @@ class CartController(
     ): ResponseEntity<CartResponse> {
         val userId = getUserIdFromPrincipal(userDetails)
         val cart = removeItemFromCartUseCase.execute(userId, productId)
+        return ResponseEntity.ok(CartResponse.fromDomain(cart))
+    }
+
+    @DeleteMapping("/clear")
+    fun clearCart(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<CartResponse> {
+        val userId = getUserIdFromPrincipal(userDetails)
+        val cart = clearCartUseCase.execute(userId)
         return ResponseEntity.ok(CartResponse.fromDomain(cart))
     }
 }

@@ -7,6 +7,7 @@ import com.vini.torres.ecommerceAPI.application.usecase.product.UpdateProductUse
 import com.vini.torres.ecommerceAPI.presentation.request.ProductRequest
 import com.vini.torres.ecommerceAPI.presentation.response.ProductResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,6 +19,7 @@ class ProductController(
     private val deleteProductUseCase: DeleteProductUseCase
 ) {
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun create(@RequestBody request: ProductRequest): ResponseEntity<ProductResponse> {
         val createdProduct = createProductUseCase.execute(request.toDomain())
@@ -37,6 +39,7 @@ class ProductController(
             .orElse(ResponseEntity.notFound().build())
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody request: ProductRequest): ResponseEntity<ProductResponse> {
         return updateProductUseCase.execute(id, request.toDomain())
@@ -44,6 +47,7 @@ class ProductController(
             .orElse(ResponseEntity.notFound().build())
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         return if (deleteProductUseCase.execute(id)) {
